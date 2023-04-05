@@ -6,7 +6,7 @@ try:
 except:
   pass
 
-n = int(E[2][0].split("n=")[1]) 
+n = int(E[2][0].split("n=")[1])
 
 vertices = [str(i) for i in range(1, n+1)]
 
@@ -31,5 +31,5 @@ while vertices:
   valores = sorted(map(int, componentes))
   saida += " ".join(map(str, valores)) + "\n"
   componentes.clear()
-  
+
 print(saida.strip())
