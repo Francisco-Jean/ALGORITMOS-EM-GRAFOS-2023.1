@@ -1,8 +1,8 @@
 import random
 
 
-n = random.randint(10, 100)
-
+#n = random.randint(10, 10000)
+n = 100000
 print(n)
 
 if n < 500:
