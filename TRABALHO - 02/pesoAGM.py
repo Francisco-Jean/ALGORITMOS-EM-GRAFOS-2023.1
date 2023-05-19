@@ -1,5 +1,30 @@
 import sys
-import time
+
+class ConjuntoRepresentantes:
+    def __init__(self, n):
+        self.representante = [i for i in range(n)]
+        self.tamanho = [0] * n
+
+    def find(self, x):
+        if self.representante[x] != x:
+            self.representante[x] = self.find(self.representante[x])
+        return self.representante[x]
+
+    def union(self, x, y):
+        x_root = self.find(x)
+        y_root = self.find(y)
+
+        if x_root == y_root:
+            return
+
+        if self.tamanho[x_root] < self.tamanho[y_root]:
+            self.representante[x_root] = y_root
+        elif self.tamanho[x_root] > self.tamanho[y_root]:
+            self.representante[y_root] = x_root
+        else:
+            self.representante[y_root] = x_root
+            self.tamanho[x_root] += 1
+
 
 class Vertice:
     def __init__(self, valor, proximo):
@@ -25,32 +50,26 @@ def calcularPesoAGM(G,n):
     L = ordenarArestas(G)
     contarArestas = 0
     pesoAGM = 0
-    rep = [x for x in range(n+1)]
+    rep = ConjuntoRepresentantes(n)
+  
+    '''
     comp = [None] * n
     for u in range(n):
         primeiro = Vertice(u, None)
         ultimo = primeiro
-        comp[u] = Componente(primeiro,ultimo,1)
+        comp[u] = Componente(primeiro,ultimo,1)*/
+    '''
+  
     while contarArestas != n-1:
         aresta = L.pop(0)
         u = aresta[0]
         v = aresta[1]
-        if rep[u] != rep[v]:
+        rep_u = rep.find(u)
+        rep_v = rep.find(v)
+        if rep_u != rep_v:
             contarArestas += 1
             pesoAGM += aresta[2]
-            x = rep[u]
-            y = rep[v]
-            if comp[x].tamanho < comp[y].tamanho:
-                cp_x = x
-                x = y
-                y = cp_x
-            z = comp[y].primeiro
-            comp[x].ultimo.proximo = z
-            comp[x].ultimo = comp[y].ultimo
-            comp[x].tamanho = comp[x].tamanho + comp[y].tamanho
-            while z != None:
-                rep[z.valor] = x
-                z = z.proximo
+            rep.union(rep_u,rep_v)
     return pesoAGM
 
 
@@ -61,8 +80,8 @@ if __name__ == "__main__":
     Grafo = []
     for x in entrada[4:]:
         aresta = x.split(" ")
-        v1 = int(aresta[0]) - 1
-        v2 = int(aresta[1]) - 1
+        v1 = int(aresta[0])
+        v2 = int(aresta[1])
         peso = float(aresta[2].split("\n")[0])
         Grafo.append([v1,v2,peso])
     tamanho = calcularPesoAGM(Grafo,n)
